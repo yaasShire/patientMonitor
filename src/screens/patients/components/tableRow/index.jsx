@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: "center",
         justifyContent: "space-between",
-        height: 55,
+        height: 45,
     },
     leftPart: {
         backgroundColor: colors.SECONDARY_COLOR,

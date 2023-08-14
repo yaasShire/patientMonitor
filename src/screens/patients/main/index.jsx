@@ -43,16 +43,10 @@ const MainPatients = ({ navigation }) => {
                     {/* <HeadingTitle title='Patients' /> */}
                 </View>
                 <View style={styles.content}>
-                    {/* {
-                        patients.map(patient => (
-                            <PatientCard view key={patient.name} patient={patient} onPress={() => {
-                                navigation.navigate('patientView')
-                            }} />
-                        ))
-                    } */}
                     <FlatList
                         scrollEnabled={false}
-                        contentContainerStyle={{ rowGap: 15 }}
+                        style={{ flex: 1 }}
+                        contentContainerStyle={{ rowGap: 10 }}
                         data={patients}
                         keyExtractor={(item) => item?.patientID}
                         renderItem={({ item }) => (
@@ -67,7 +61,7 @@ const MainPatients = ({ navigation }) => {
                 setShow(true)
             }} />
             {/* <AddPerson show={show} setShow={setShow} /> */}
-            <AddPatient show={show} setShow={setShow} />
+            <AddPatient show={show} setShow={setShow} label='Add Patient' />
         </View>
     )
 }
@@ -81,6 +75,7 @@ const styles = StyleSheet.create({
     },
     wrapper: {
         rowGap: 20,
+        flex: 1
     },
     inputWrapper: {
         paddingHorizontal: SCREEN_PADDING

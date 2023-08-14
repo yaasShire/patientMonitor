@@ -12,7 +12,7 @@ import { Formik } from 'formik'
 import * as Yup from 'yup';
 import Button from 'react-native-paper';
 
-const AddPatient = ({ show = false, setShow = () => { }, data = {} }) => {
+const UpdatePatient = ({ show = false, setShow = () => { }, data = {}, label = "" }) => {
     const [toggleInput, setToggleInput] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -27,7 +27,7 @@ const AddPatient = ({ show = false, setShow = () => { }, data = {} }) => {
             .required('Password is required'),
     });
 
-    const handleLogin = async (values) => {
+    const createPatient = async (values) => {
         const formData = {
             patientID: values.patientID,
             name: values.name,
@@ -60,12 +60,11 @@ const AddPatient = ({ show = false, setShow = () => { }, data = {} }) => {
                     <HeadingTitle title="Add Patient" />
                     <ScrollView style={{ width: "100%" }} contentContainerStyle={{ rowGap: 25 }} showsVerticalScrollIndicator={false}>
                         <Formik
-                            initialValues={{ patientID: "", name: "", age: "", tell: "", sex: "", password: "" }}
-                            onSubmit={handleLogin}
+                            initialValues={{ patientID: data?.patientID, name: data?.name, age: `${data?.age}`, tell: `${data?.tell}`, sex: data?.sex, password: data?.password }}
+                            onSubmit={createPatient}
                             validationSchema={validationSchema}
                         >
                             {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-
                                 <View style={{ rowGap: 15, height: "100%" }}>
                                     {touched.patientID && errors.patientID && <Text style={{ color: "red" }}>{errors.patientID}</Text>}
                                     <TextField
@@ -95,7 +94,6 @@ const AddPatient = ({ show = false, setShow = () => { }, data = {} }) => {
                                         onBlur={handleBlur('age')}
                                         value={values.age}
                                         placeholder="25"
-                                        keyboardType='number-pad'
 
                                     />
                                     {touched.tell && errors.tell && <Text style={{ color: "red" }}>{errors.tell}</Text>}
@@ -106,7 +104,7 @@ const AddPatient = ({ show = false, setShow = () => { }, data = {} }) => {
                                         onBlur={handleBlur('tell')}
                                         value={values.tell}
                                         placeholder="061234484"
-                                        keyboardType='number-pad'
+
                                     />
                                     {touched.sex && errors.sex && <Text style={{ color: "red" }}>{errors.sex}</Text>}
                                     <TextField
@@ -126,7 +124,7 @@ const AddPatient = ({ show = false, setShow = () => { }, data = {} }) => {
                                         value={values.password}
                                     // placeholder="Yusuf Ahmed Shire"
                                     />
-                                    <CustomButton title='Register' onPress={handleSubmit} />
+                                    <CustomButton title={label} onPress={handleSubmit} />
                                 </View>
                             )}
                         </Formik>
@@ -184,4 +182,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AddPatient;
+export default UpdatePatient;

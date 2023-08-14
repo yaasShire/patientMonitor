@@ -6,7 +6,7 @@ import ResponsibleView from './view'
 const ResponsiblesStack = () => {
     const Stack = createNativeStackNavigator()
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName='mainResponsibles' screenOptions={{ headerShown: false }}>
             <Stack.Screen name='mainResponsibles' component={MainResponsibles} />
             <Stack.Screen name='responsiblesView' component={ResponsibleView} />
         </Stack.Navigator>

@@ -17,10 +17,6 @@ const Login = ({ navigation }) => {
         if (data?.accessToken) {
             await AsyncStorage.setItem('token', data?.accessToken)
             navigation.navigate('bottomTabs', { screen: 'homeStack' })
-            // navigation.reset({
-            //     index: 0,
-            //     routes: [{ name: 'login' }],
-            // });
             setIsLoading(false)
         }
         if (data?.success == false) {

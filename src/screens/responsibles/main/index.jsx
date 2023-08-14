@@ -59,8 +59,7 @@ const MainResponsible = ({ navigation }) => {
             <FloatingButton onPress={() => {
                 setShow(true)
             }} />
-            {/* <AddPerson show={show} setShow={setShow} /> */}
-            <AddResponsible show={show} setShow={setShow} />
+            <AddResponsible show={show} setShow={setShow} label='Add Responsible' />
         </View>
     )
 }

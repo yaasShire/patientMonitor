@@ -9,7 +9,10 @@ import { patients } from '../../../utils/data'
 import HeadingTitle from '../../../components/molecules/headingTitle'
 import PatientCard from '../../../components/molecules/patientCard'
 import { fetchData } from '../../../api/fetch'
+import AddResponsible from '../components/addResponsible'
+import UpdateResponsible from '../components/updateResponsible'
 const ResponsibleView = ({ navigation, route }) => {
+    const [show, setShow] = useState(false)
     return (
         <View style={styles.container}>
             <SafeAreaView />
@@ -19,12 +22,14 @@ const ResponsibleView = ({ navigation, route }) => {
                     <View style={styles.imageTextWrapper}>
                         <Avatar.Image size={55} source={require('../../../assets/splash.png')} />
                         <View>
-                            <Text>{route?.params?.data?.name}</Text>
-                            <Text>Responsible</Text>
+                            <Text style={{ fontSize: 18, fontWeight: "500", color: colors.BLACK }}>{route?.params?.data?.name}</Text>
+                            <Text style={{ fontSize: 15, fontWeight: "400", color: colors.BLACK }}>Responsible</Text>
                         </View>
                     </View>
                     <Pressable style={styles.editButton}>
-                        <Text style={styles.editButtonText}>Edit</Text>
+                        <Text style={styles.editButtonText} onPress={() => {
+                            setShow(true)
+                        }}>Edit</Text>
                     </Pressable>
                 </View>
                 <View style={styles.table}>
@@ -39,25 +44,8 @@ const ResponsibleView = ({ navigation, route }) => {
                     <TableRow patient={patients[0]} title={'Sex'} value={route?.params?.data?.sex} />
                     <Divider />
                 </View>
-                <View style={{ rowGap: 10 }}>
-                    {/* <HeadingTitle title='Responsibles' /> */}
-                    {/* <View style={{ rowGap: 20 }}>
-                        <FlatList
-                            contentContainerStyle={{ rowGap: 15 }}
-                            scrollEnabled={false}
-                            showVerticalScrollIndicator={false}
-                            data={route?.params?.data?.Responsibles}
-                            keyExtractor={(item) => item?.id}
-                            renderItem={({ item }) => (
-
-                                <PatientCard chevron type='Responsible' patient={item} onPress={() => {
-                                    navigation.navigate('reponsiblesStack', { screen: "mainResponsibles", params: { data: item } })
-                                }} />
-                            )}
-                        />
-                    </View> */}
-                </View>
             </ScrollView>
+            <UpdateResponsible show={show} setShow={setShow} data={route?.params?.data} label="Update Responsible" />
         </View>
     )
 }

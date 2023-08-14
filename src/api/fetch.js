@@ -3,7 +3,6 @@ import { API, BASE_URL } from "."
 
 export const fetchData = async (endPoint, setError) => {
     const accessToken = await AsyncStorage.getItem('token')
-    console.log(accessToken)
     try {
         const res = await fetch(`${BASE_URL}${endPoint}`, {
             method: "get",
@@ -16,6 +15,5 @@ export const fetchData = async (endPoint, setError) => {
         console.log('error happen in the fetch get auth method', error);
     }
     finally {
-        console.log("Final");
     }
 }

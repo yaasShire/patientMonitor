@@ -106,3 +106,32 @@ export const formDataGenerator = (values) => {
     })
     return data;
 }
+
+
+export const ReportData = [
+    {
+        id: 1,
+        label: "Heart Beat",
+        quantity: 30
+    },
+    {
+        id: 2,
+        label: "Temperature",
+        quantity: 80
+    },
+    {
+        id: 3,
+        label: "Room Temperature",
+        quantity: 20
+    },
+    {
+        id: 4,
+        label: "Humidity",
+        quantity: 90
+    },
+    {
+        id: 5,
+        label: "Oxygen",
+        quantity: 60
+    },
+]

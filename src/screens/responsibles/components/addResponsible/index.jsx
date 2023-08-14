@@ -12,7 +12,7 @@ import { Formik } from 'formik'
 import * as Yup from 'yup';
 import Button from 'react-native-paper';
 
-const AddResponsible = ({ show = false, setShow = () => { } }) => {
+const AddResponsible = ({ show = false, setShow = () => { }, data = {} }) => {
     const [toggleInput, setToggleInput] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -38,24 +38,14 @@ const AddResponsible = ({ show = false, setShow = () => { } }) => {
             ResponsibleType: values.ResponsibleType,
             backup_tell: values.backup_tell
         }
-        // setIsLoading(true)
+
         const data = await postDataEndPoint('api/responsibles/signUp/', formData, setError, setIsLoading)
-        if (data.ResponsibleType) {
+        if (data?.ResponsibleType) {
             setShow(false)
         }
         console.log(data)
     };
 
-    // {
-    //     "name" : "Fluid boy ",
-    //     "age" : 23 ,
-    //     "tell" : "+259957571010",
-    //     "backup_tell" : "+718781237814",
-    //     "email":"abdirahmanabdirashid429@gmail.com" ,
-    //     "sex" : "male" ,
-    //     "ResponsibleType" :"parent" ,
-    //     "patientId" : "p1101"
-    //   }
 
     return (
         <Modal
@@ -112,6 +102,7 @@ const AddResponsible = ({ show = false, setShow = () => { } }) => {
                                         onBlur={handleBlur('email')}
                                         value={values.email}
                                         placeholder="y@y.com"
+                                        keyboardType='email-address'
                                     />
                                     {touched.name && errors.name && <Text style={{ color: "red" }}>{errors.name}</Text>}
                                     <TextField
@@ -131,6 +122,7 @@ const AddResponsible = ({ show = false, setShow = () => { } }) => {
                                         onBlur={handleBlur('age')}
                                         value={values.age}
                                         placeholder="25"
+                                        keyboardType='number-pad'
                                     />
                                     {touched.tell && errors.tell && <Text style={{ color: "red" }}>{errors.tell}</Text>}
                                     <TextField
@@ -140,7 +132,7 @@ const AddResponsible = ({ show = false, setShow = () => { } }) => {
                                         onBlur={handleBlur('tell')}
                                         value={values.tell}
                                         placeholder="061234484"
-
+                                        keyboardType='number-pad'
                                     />
                                     {touched.backup_tell && errors.backup_tell && <Text style={{ color: "red" }}>{errors.backup_tell}</Text>}
                                     <TextField
@@ -150,6 +142,7 @@ const AddResponsible = ({ show = false, setShow = () => { } }) => {
                                         onBlur={handleBlur('backup_tell')}
                                         value={values.backup_tell}
                                         placeholder="061234484"
+                                        keyboardType='number-pad'
 
                                     />
                                     {touched.sex && errors.sex && <Text style={{ color: "red" }}>{errors.sex}</Text>}
@@ -196,7 +189,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
-        height: "78%",
+        height: "90%",
         width: "90%",
         rowGap: 20
     },

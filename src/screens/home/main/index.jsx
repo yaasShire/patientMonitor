@@ -107,7 +107,7 @@ const MainHome = ({ navigation }) => {
                             data={patients}
                             renderItem={({ item }) => (
                                 <PatientCard key={item?.name} chevron patient={item} onPress={() => {
-                                    navigation.navigate('patientView', { data: item })
+                                    navigation.navigate('patientsStack', { screen: "patientView", params: { data: item } })
                                 }} />
                             )}
                         // onScroll={handler}
