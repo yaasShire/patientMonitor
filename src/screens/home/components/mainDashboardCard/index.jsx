@@ -18,7 +18,7 @@ export default MainDashboardCard
 
 const styles = StyleSheet.create({
     container: (bgColor) => ({
-        width: 180,
+        width: 170,
         height: 130,
         backgroundColor: bgColor,
         borderRadius: 10,

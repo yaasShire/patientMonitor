@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Modal, StyleSheet, Text, Pressable, View, ScrollView } from 'react-native';
 import { SCREEN_PADDING, colors } from '../../../../constants';
 import TextField from '../../../../components/atoms/textField';
@@ -11,11 +11,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Formik } from 'formik'
 import * as Yup from 'yup';
 import Button from 'react-native-paper';
+import { updateData } from '../../../../api/update';
+import { fetchData } from '../../../../api/fetch';
 
-const UpdateResponsible = ({ show = false, setShow = () => { }, data = {}, label = "" }) => {
+const UpdateResponsible = ({ show = false, setShow = () => { }, data = {}, label = "", getPatient = () => { } }) => {
     const [toggleInput, setToggleInput] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+    const [responsible, setResponsible] = useState({})
     const validationSchema = Yup.object().shape({
         patientID: Yup.string().required('PatientId is required'),
         name: Yup.string().required('Name is required'),
@@ -27,7 +30,7 @@ const UpdateResponsible = ({ show = false, setShow = () => { }, data = {}, label
         sex: Yup.string().required('Sex is required'),
     });
 
-    const handleLogin = async (values) => {
+    const updateResponsible = async (values) => {
         const formData = {
             patientId: values.patientID,
             name: values.name,
@@ -39,24 +42,16 @@ const UpdateResponsible = ({ show = false, setShow = () => { }, data = {}, label
             backup_tell: values.backup_tell
         }
         // setIsLoading(true)
-        const data = await postDataEndPoint('api/responsibles/signUp/', formData, setError, setIsLoading)
+        const result = await updateData(`api/responsibles/${data?.id}/`, formData, setError, setIsLoading)
+
         setShow(false)
-        if (data?.ResponsibleType) {
+        if (result?.ResponsibleType) {
+            getPatient()
             setShow(false)
         }
-        console.log(data)
     };
 
-    // {
-    //     "name" : "Fluid boy ",
-    //     "age" : 23 ,
-    //     "tell" : "+259957571010",
-    //     "backup_tell" : "+718781237814",
-    //     "email":"abdirahmanabdirashid429@gmail.com" ,
-    //     "sex" : "male" ,
-    //     "ResponsibleType" :"parent" ,
-    //     "patientId" : "p1101"
-    //   }
+
 
     return (
         <Modal
@@ -79,7 +74,7 @@ const UpdateResponsible = ({ show = false, setShow = () => { }, data = {}, label
                     <ScrollView style={{ width: "100%" }} contentContainerStyle={{ rowGap: 25 }} showsVerticalScrollIndicator={false}>
                         <Formik
                             initialValues={{ patientID: data?.patientId, name: data?.name, age: `${data?.age}`, tell: `${data?.tell}`, sex: data?.sex, password: data?.password, backup_tell: data?.backup_tell, ResponsibleType: data?.ResponsibleType, email: data?.email }}
-                            onSubmit={handleLogin}
+                            onSubmit={updateResponsible}
                             validationSchema={validationSchema}
                         >
                             {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (

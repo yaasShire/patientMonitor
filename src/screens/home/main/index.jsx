@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, FlatList, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SCREEN_PADDING, colors } from '../../../constants'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -14,7 +14,10 @@ const MainHome = ({ navigation }) => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [patients, setPatients] = useState([])
+    const [refreshing, setRefreshing] = useState(false)
     const [currentScrollValue, setCurrentScrollValue] = useState(0)
+    const [patientsLength, setPatientsLength] = useState(0)
+    const [responsiblesLength, setResponsiblesLength] = useState(0)
     const animatedScrollStyle = useAnimatedStyle(() => ({
         transform: [
             {
@@ -22,28 +25,8 @@ const MainHome = ({ navigation }) => {
             }
         ]
     }))
-    // const handleScroll = useAnimatedScrollHandler({
-    //     onScroll: (event) => {
-    //         const offsetY = event.contentOffset.y;
-    //         const diff = offsetY - scrollY.value;
-    //         scrollY.value = offsetY;
 
-
-    //         if (diff > 0) {
-    //             // User is scrolling down
-    //             scrollY.value = withSpring(offsetY);
-    //         } else {
-    //             // User is scrolling up
-    //             scrollY.value = withSpring(offsetY);
-    //         }
-
-    //         const threshold = 100;
-
-    //         headerOpacity.value = offsetY == 0 ? 1 : 0
-    //     }
-    // })
     const headerStyle = useAnimatedStyle(() => ({
-        // opacity: withTiming(headerOpacity.value, { duration: 1000 }),
         transform: [
             {
                 translateY: headerOpacity.value == 0 ? -100 : 0
@@ -77,6 +60,22 @@ const MainHome = ({ navigation }) => {
         }
         setIsLoading(false)
     }
+    const fetchPatientsLength = async () => {
+        setIsLoading(true)
+        const data = await fetchData('api/patients/', setError)
+        if (data?.length > 0) {
+            setPatients(data)
+        }
+        setIsLoading(false)
+    }
+    const fetchResponsibleLength = async () => {
+        setIsLoading(true)
+        const data = await fetchData('api/patients/', setError)
+        if (data?.length > 0) {
+            setPatients(data)
+        }
+        setIsLoading(false)
+    }
     useEffect(() => {
         fetchPatients()
     }, [])
@@ -87,6 +86,7 @@ const MainHome = ({ navigation }) => {
                 <Header title='Home' />
             </Animated.View> */}
             <Animated.ScrollView
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchPatients} />}
                 scrollEventThrottle={2}
                 onScroll={handleScroll}
                 showsVerticalScrollIndicator={false}>
@@ -107,7 +107,7 @@ const MainHome = ({ navigation }) => {
                             data={patients}
                             renderItem={({ item }) => (
                                 <PatientCard key={item?.name} chevron patient={item} onPress={() => {
-                                    navigation.navigate('patientsStack', { screen: "patientView", params: { data: item } })
+                                    navigation.navigate('patientsStack', { screen: "patientView", initial: false, params: { data: item } })
                                 }} />
                             )}
                         // onScroll={handler}

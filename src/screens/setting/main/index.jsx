@@ -4,9 +4,12 @@ import { Avatar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { colors } from '../../../constants';
 import { Feather } from 'react-native-vector-icons'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LogOutModal from '../components/logOutModal';
 const MainSetting = ({ navigation }) => {
     const [notificationsEnabled, setNotificationsEnabled] = useState(false);
     const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+    const [showLogOutModal, setShowLogOutModal] = useState(false);
     const userName = "John Doe";
     const profileImage = require('../../../assets/splash.png')
 
@@ -17,6 +20,10 @@ const MainSetting = ({ navigation }) => {
     const handleDarkModeToggle = () => {
         setDarkModeEnabled(!darkModeEnabled);
     };
+    const handleLogOut = async () => {
+        await AsyncStorage.setItem("token", "")
+        navigation.navigate("auth", { screen: "login" })
+    }
 
     return (
         <View style={styles.container}>
@@ -40,11 +47,12 @@ const MainSetting = ({ navigation }) => {
                         </View>
                     </View>
                 </View>
-                <Pressable style={{ flexDirection: 'row', justifyContent: "flex-start", alignItems: "center", columnGap: 10 }}>
+                <Pressable onPress={() => setShowLogOutModal(true)} style={{ flexDirection: 'row', justifyContent: "flex-start", alignItems: "center", columnGap: 10, backgroundColor: colors.LIGHT_BLUE, height: 50, borderRadius: 5, paddingHorizontal: 10 }}>
                     <Feather name="log-out" size={25} color="red" />
-                    <Text>Log out</Text>
+                    <Text style={{ fontWeight: "500", fontSize: 18, color: colors?.WHITE }}>Log out</Text>
                 </Pressable>
             </View>
+            <LogOutModal show={showLogOutModal} setShow={setShowLogOutModal} onPress={handleLogOut} />
         </View>
     );
 };

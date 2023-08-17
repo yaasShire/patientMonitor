@@ -11,8 +11,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Formik } from 'formik'
 import * as Yup from 'yup';
 import Button from 'react-native-paper';
+import { updateData } from '../../../../api/update';
 
-const UpdatePatient = ({ show = false, setShow = () => { }, data = {}, label = "" }) => {
+const UpdatePatient = ({ show = false, setShow = () => { }, data = {}, label = "", getPatient = () => { } }) => {
     const [toggleInput, setToggleInput] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -26,8 +27,7 @@ const UpdatePatient = ({ show = false, setShow = () => { }, data = {}, label = "
             .min(6, 'Password must be at least 6 characters')
             .required('Password is required'),
     });
-
-    const createPatient = async (values) => {
+    const updatePatient = async (values) => {
         const formData = {
             patientID: values.patientID,
             name: values.name,
@@ -37,7 +37,12 @@ const UpdatePatient = ({ show = false, setShow = () => { }, data = {}, label = "
             password: values.password,
         }
         setIsLoading(true)
-        const data = await postDataEndPoint('api/patients/', formData, setError, setIsLoading)
+        // console.log(data)
+        // const result = await postDataEndPoint(`api/admin/patients/${data?.patientID}/`, formData, setError, setIsLoading)
+        const result = await updateData(`api/patients/${data?.patientID}/`, formData, setError, setIsLoading)
+        getPatient()
+        // console.log(data.patientID)
+        console.log(result)
         setShow(false)
     };
     return (
@@ -61,7 +66,7 @@ const UpdatePatient = ({ show = false, setShow = () => { }, data = {}, label = "
                     <ScrollView style={{ width: "100%" }} contentContainerStyle={{ rowGap: 25 }} showsVerticalScrollIndicator={false}>
                         <Formik
                             initialValues={{ patientID: data?.patientID, name: data?.name, age: `${data?.age}`, tell: `${data?.tell}`, sex: data?.sex, password: data?.password }}
-                            onSubmit={createPatient}
+                            onSubmit={updatePatient}
                             validationSchema={validationSchema}
                         >
                             {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (

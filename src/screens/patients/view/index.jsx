@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, Pressable, FlatList, Image } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, Pressable, FlatList, Image, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Header from '../../../components/molecules/header'
@@ -16,17 +16,33 @@ import ReportTabs from '../../../navigation/topTabs'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 const PatientView = ({ navigation, route }) => {
     const [show, setShow] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const [patient, setPatient] = useState({})
+    const [refreshing, setRefreshing] = useState(false)
+    const getPatient = async (values) => {
+        const result = await fetchData(`api/patients/${route?.params?.data?.patientID}/`, setError, setIsLoading)
+        setPatient(result)
+        console.log(result, 'haa')
+        setShow(false)
+    };
+
+    useEffect(() => {
+        getPatient()
+    }, [])
 
     return (
-        <ScrollView scrollEnabled={false} style={styles.container} contentContainerStyle={{ flex: 1 }}>
+        <ScrollView showsVerticalScrollIndicator={false} scrollEnabled={false} style={styles.container} contentContainerStyle={{ flex: 1 }}>
             <SafeAreaView />
             <Header title='Patient Information' back navigation={navigation} />
-            <ScrollView scrollEnabled={false} style={styles.scrollStyle} contentContainerStyle={{ flex: 1, rowGap: 20 }}>
+            <ScrollView
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={getPatient} />}
+                showsVerticalScrollIndicator={false} style={styles.scrollStyle} contentContainerStyle={{ rowGap: 20 }}>
                 <View style={styles.upperContentWrapper}>
                     <View style={styles.imageTextWrapper}>
                         <Avatar.Image size={55} source={require('../../../assets/splash.png')} />
                         <View>
-                            <Text style={{ fontSize: 18, fontWeight: "500", color: colors.BLACK }}>{route?.params?.data?.name}</Text>
+                            <Text style={{ fontSize: 18, fontWeight: "500", color: colors.BLACK }}>{patient?.name}</Text>
                             <Text style={{ fontSize: 15, fontWeight: "400", color: colors.BLACK }}>Patient</Text>
                         </View>
                     </View>
@@ -37,37 +53,36 @@ const PatientView = ({ navigation, route }) => {
                     </Pressable>
                 </View>
                 <View style={styles.table}>
-                    <TableRow patient={patients[0]} title={'PatientId'} value={route?.params?.data?.patientID} />
+                    <TableRow patient={patients[0]} title={'PatientId'} value={patient?.patientID} />
                     <Divider />
-                    <TableRow patient={patients[0]} title={'Name'} value={route?.params?.data?.name} />
+                    <TableRow patient={patients[0]} title={'Name'} value={patient?.name} />
                     <Divider />
-                    <TableRow patient={patients[0]} title={'Age'} value={route?.params?.data?.age} />
+                    <TableRow patient={patients[0]} title={'Age'} value={patient?.age} />
                     <Divider />
-                    <TableRow patient={patients[0]} title={'Mobile Number'} value={route?.params?.data?.tell} />
+                    <TableRow patient={patients[0]} title={'Mobile Number'} value={patient?.tell} />
                     <Divider />
-                    <TableRow patient={patients[0]} title={'Sex'} value={route?.params?.data?.sex} />
+                    <TableRow patient={patients[0]} title={'Sex'} value={patient?.sex} />
                     <Divider />
-                    <TableRow patient={patients[0]} title={'Responsibles'} value={route?.params?.data?.Responsibles?.length} />
+                    <TableRow patient={patients[0]} title={'Responsibles'} value={patient?.Responsibles?.length} />
                 </View>
                 <View style={{ alignItems: "flex-end", height: 50, justifyContent: "center" }}>
                     <Pressable onPress={async () => {
-                        await AsyncStorage.setItem("patiendId", route?.params?.data?.patientID)
-                        navigation.navigate("reportDetail", { patientId: route?.params?.data?.patientID })
+                        await AsyncStorage.setItem("patiendId", patient?.patientID)
+                        navigation.navigate("reportDetail", { patientId: patient?.patientID })
                     }} style={{ backgroundColor: colors.PRIMARY_COLOR, width: 130, height: 40, borderRadius: 130 / 2, justifyContent: "center", alignItems: 'center' }}>
                         <Text style={{ color: colors.WHITE }}>Report Detail</Text>
                     </Pressable>
                 </View>
-
                 <View style={{ rowGap: 10 }}>
                     <HeadingTitle title='Responsibles' />
                     <View style={{ rowGap: 20 }}>
                         {
-                            route?.params?.data?.Responsibles?.length > 0 ?
+                            patient?.Responsibles?.length > 0 ?
                                 <FlatList
                                     contentContainerStyle={{ rowGap: 15 }}
                                     scrollEnabled={false}
                                     showVerticalScrollIndicator={false}
-                                    data={route?.params?.data?.Responsibles}
+                                    data={patient?.Responsibles}
                                     keyExtractor={(item) => item?.id}
                                     renderItem={({ item }) => (
                                         <PatientCard chevron type='Responsible' patient={item} onPress={() => {
@@ -83,7 +98,7 @@ const PatientView = ({ navigation, route }) => {
                     </View>
                 </View>
             </ScrollView>
-            <UpdatePatient show={show} setShow={setShow} data={route?.params?.data} label="Update Patient" />
+            <UpdatePatient getPatient={getPatient} show={show} setShow={setShow} data={patient} label="Update Patient" />
         </ScrollView>
     )
 }
@@ -92,11 +107,11 @@ export default PatientView
 
 const styles = StyleSheet.create({
     container: {
-        // flex: 1,
         height: HeightDimension,
         backgroundColor: colors.WHITE
     },
     scrollStyle: {
+        flex: 1,
         paddingHorizontal: SCREEN_PADDING - 5,
         rowGap: 30,
     },

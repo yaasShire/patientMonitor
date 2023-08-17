@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, Pressable, FlatList } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, Pressable, FlatList, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Header from '../../../components/molecules/header'
@@ -13,16 +13,34 @@ import AddResponsible from '../components/addResponsible'
 import UpdateResponsible from '../components/updateResponsible'
 const ResponsibleView = ({ navigation, route }) => {
     const [show, setShow] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const [responsible, setResponsible] = useState({})
+    const [refreshing, setRefreshing] = useState(false)
+    const getResponsible = async (values) => {
+        // setIsLoading(true)
+        const result = await fetchData(`api/responsibles/${route?.params?.data?.id}/`, setError, setIsLoading)
+        setResponsible(result)
+        console.log(result, 'haa')
+        setShow(false)
+
+    };
+
+    useEffect(() => {
+        getResponsible()
+    }, [])
     return (
         <View style={styles.container}>
             <SafeAreaView />
             <Header title='Responsible Information' />
-            <ScrollView contentContainerStyle={styles.scrollStyle}>
+            <ScrollView
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={getResponsible} />}
+                contentContainerStyle={styles.scrollStyle}>
                 <View style={styles.upperContentWrapper}>
                     <View style={styles.imageTextWrapper}>
                         <Avatar.Image size={55} source={require('../../../assets/splash.png')} />
                         <View>
-                            <Text style={{ fontSize: 18, fontWeight: "500", color: colors.BLACK }}>{route?.params?.data?.name}</Text>
+                            <Text style={{ fontSize: 18, fontWeight: "500", color: colors.BLACK }}>{responsible?.name}</Text>
                             <Text style={{ fontSize: 15, fontWeight: "400", color: colors.BLACK }}>Responsible</Text>
                         </View>
                     </View>
@@ -33,19 +51,19 @@ const ResponsibleView = ({ navigation, route }) => {
                     </Pressable>
                 </View>
                 <View style={styles.table}>
-                    <TableRow patient={patients[0]} title={'Responsible Id'} value={route?.params?.data?.id} />
+                    <TableRow patient={patients[0]} title={'Responsible Id'} value={responsible?.id} />
                     <Divider />
-                    <TableRow patient={patients[0]} title={'Name'} value={route?.params?.data?.name} />
+                    <TableRow patient={patients[0]} title={'Name'} value={responsible?.name} />
                     <Divider />
-                    <TableRow patient={patients[0]} title={'Age'} value={route?.params?.data?.age} />
+                    <TableRow patient={patients[0]} title={'Age'} value={responsible?.age} />
                     <Divider />
-                    <TableRow patient={patients[0]} title={'Mobile Number'} value={route?.params?.data?.tell} />
+                    <TableRow patient={patients[0]} title={'Mobile Number'} value={responsible?.tell} />
                     <Divider />
-                    <TableRow patient={patients[0]} title={'Sex'} value={route?.params?.data?.sex} />
+                    <TableRow patient={patients[0]} title={'Sex'} value={responsible?.sex} />
                     <Divider />
                 </View>
             </ScrollView>
-            <UpdateResponsible show={show} setShow={setShow} data={route?.params?.data} label="Update Responsible" />
+            <UpdateResponsible getResponsible={getResponsible} show={show} setShow={setShow} data={responsible} label="Update Responsible" />
         </View>
     )
 }

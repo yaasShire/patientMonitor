@@ -4,6 +4,7 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import { SCREEN_PADDING, colors } from '../../../../constants'
 import SensorRecord from '../sensorRecord'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Image } from 'react-native'
 
 const BottomSheetPatient = ({ bottomSheet, label = "", sheetData = [] }) => {
     const [data, setData] = useState([])
@@ -48,6 +49,14 @@ const BottomSheetPatient = ({ bottomSheet, label = "", sheetData = [] }) => {
                         ))
                     }
                 </View>
+                {
+                    sheetData?.length == 0 && (
+                        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                            <Image source={require('../../../../assets/noData.png')} style={{ width: 200, height: 200, resizeMode: "cover" }} />
+                            <Text>No data found!</Text>
+                        </View>
+                    )
+                }
             </ScrollView>
         </RBSheet>
     )

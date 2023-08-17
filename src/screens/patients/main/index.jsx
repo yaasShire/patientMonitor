@@ -33,9 +33,6 @@ const MainPatients = ({ navigation }) => {
         <View style={styles.container}>
             <SafeAreaView />
             <Header title='Patients' />
-            {/* <View style={styles.inputWrapper}>
-                <SearchInput />
-            </View> */}
             <ScrollView
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchPatients} />}
                 style={styles.wrapper} showsVerticalScrollIndicator={false}>
@@ -44,6 +41,7 @@ const MainPatients = ({ navigation }) => {
                 </View>
                 <View style={styles.content}>
                     <FlatList
+
                         scrollEnabled={false}
                         style={{ flex: 1 }}
                         contentContainerStyle={{ rowGap: 10 }}
@@ -82,7 +80,7 @@ const styles = StyleSheet.create({
     },
     content: {
         rowGap: 30,
-        padding: SCREEN_PADDING
+        paddingHorizontal: SCREEN_PADDING
     },
     heading: {
         padding: SCREEN_PADDING,
